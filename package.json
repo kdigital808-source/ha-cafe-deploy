@@ -1,0 +1,10 @@
+{
+  "name": "ha-cafe-prep",
+  "version": "1.0.0",
+  "description": "HĀ CAFE kitchen prep planning app",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^8.0.0"
+  }
+}
