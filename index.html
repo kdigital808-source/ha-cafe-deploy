@@ -2991,10 +2991,23 @@ async function toggleItemDone(itemId) {
   } else {
     done.add(itemId);
   }
-  latest.done = Array.from(done);
-  await saveLatestPlan(latest);
-  renderDisplay();
+latest.done = Array.from(done);
+  saveLatestPlan(latest);
+  const li = document.querySelector('[data-item-id="' + itemId + '"]');
+  if (li) {
+    const checkEl = li.querySelector('.compact-check');
+    if (done.has(itemId)) {
+      li.classList.add('done');
+      if (checkEl) { checkEl.classList.add('checked'); checkEl.textContent = '✓'; }
+    } else {
+      li.classList.remove('done');
+      if (checkEl) { checkEl.classList.remove('checked'); checkEl.textContent = ''; }
+    }
+  } else {
+    renderDisplay();
+  }
 }
+
 
 // Edit menu — bottom-sheet with edit + clear options
 function openEditMenu() {
