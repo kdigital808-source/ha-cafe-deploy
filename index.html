@@ -2216,6 +2216,28 @@ async function saveLatestPlan(data) {
   return await storageSet('latest_plan', JSON.stringify(data));
 }
 
+let latestPlanSaveQueue = Promise.resolve();
+let pendingChecklistSaves = 0;
+
+function clonePlan(plan) {
+  return JSON.parse(JSON.stringify(plan));
+}
+
+function queueLatestPlanSave(data) {
+  const snapshot = clonePlan(data);
+  pendingChecklistSaves++;
+
+  const save = latestPlanSaveQueue
+    .catch(() => {})
+    .then(() => saveLatestPlan(snapshot))
+    .finally(() => {
+      pendingChecklistSaves = Math.max(0, pendingChecklistSaves - 1);
+    });
+
+  latestPlanSaveQueue = save;
+  return save;
+}
+
 // Device-only storage for the cook's handle (each phone keeps its own)
 async function deviceGet(key) {
   try { return localStorage.getItem(`ha-d:${key}`); } catch { return memStore[`d:${key}`] || null; }
@@ -2991,7 +3013,8 @@ async function renderDisplay() {
 // Toggle item done/undone — saves back to shared storage so all cooks see it
 async function toggleItemDone(itemId) {
   // Use cache if available, otherwise fetch once
-  const latest = planCache || await loadLatestPlan();
+  const current = planCache || await loadLatestPlan();
+  const latest = current ? clonePlan(current) : null;
   if (!latest || !latest.items) return;
   const done = new Set(latest.done && Array.isArray(latest.done) ? latest.done : []);
   if (done.has(itemId)) {
@@ -3002,7 +3025,7 @@ async function toggleItemDone(itemId) {
   latest.done = Array.from(done);
   planCache = latest; // update cache instantly
   renderDisplay();    // render immediately — no waiting on network
-  saveLatestPlan(latest); // sync to backend in background (non-blocking)
+  queueLatestPlanSave(latest); // sync to backend in order, without blocking the tap
 }
 
 // Edit menu — bottom-sheet with edit + clear options
@@ -3459,9 +3482,11 @@ document.addEventListener('visibilitychange', () => {
 // Background plan cache refresh — keeps team changes in sync without blocking taps
 async function refreshPlanCache() {
   if (activeView !== 'display') return;
+  if (pendingChecklistSaves > 0) return;
   const raw = await storageGet('latest_plan');
   if (!raw) return;
   const fresh = JSON.parse(raw);
+  if (pendingChecklistSaves > 0) return;
   // Only update if something actually changed (avoid unnecessary re-renders)
   if (JSON.stringify(fresh) !== JSON.stringify(planCache)) {
     planCache = fresh;
