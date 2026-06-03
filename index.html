@@ -2700,6 +2700,8 @@ function formatPostedTime(iso) {
 // STATE
 // ═══════════════════════════════════════════════════════════════
 let planCache = null;     // in-memory cache of latest plan — avoids round-trips on every tap
+let checklistSavePending = false;
+let checklistSaveQueue = Promise.resolve();
 let planDraft = {};       // { itemId: 'asap'|'second'|'time'|'skip' } — local draft
 let planTarget = 'tomorrow'; // always tomorrow — prep is always for next day
 let planMode = 'next';    // 'next' = starting tomorrow's list (carry undone), 'edit' = editing current
@@ -2991,7 +2993,9 @@ async function renderDisplay() {
 // Toggle item done/undone — saves back to shared storage so all cooks see it
 async function toggleItemDone(itemId) {
   // Use cache if available, otherwise fetch once
-  const latest = planCache || await loadLatestPlan();
+  const activePlan = planCache || await loadLatestPlan();
+  if (!activePlan || !activePlan.items) return;
+  const latest = JSON.parse(JSON.stringify(activePlan));
   if (!latest || !latest.items) return;
   const done = new Set(latest.done && Array.isArray(latest.done) ? latest.done : []);
   if (done.has(itemId)) {
@@ -3002,7 +3006,22 @@ async function toggleItemDone(itemId) {
   latest.done = Array.from(done);
   planCache = latest; // update cache instantly
   renderDisplay();    // render immediately — no waiting on network
-  saveLatestPlan(latest); // sync to backend in background (non-blocking)
+  queueChecklistSave(latest);
+}
+
+function queueChecklistSave(latest) {
+  checklistSavePending = true;
+  const saveTask = checklistSaveQueue
+    .catch(() => {})
+    .then(() => saveLatestPlan(latest))
+    .catch(e => console.warn('Checklist save failed', e.message));
+
+  checklistSaveQueue = saveTask;
+  saveTask.finally(() => {
+    if (checklistSaveQueue === saveTask) {
+      checklistSavePending = false;
+    }
+  });
 }
 
 // Edit menu — bottom-sheet with edit + clear options
@@ -3459,9 +3478,11 @@ document.addEventListener('visibilitychange', () => {
 // Background plan cache refresh — keeps team changes in sync without blocking taps
 async function refreshPlanCache() {
   if (activeView !== 'display') return;
+  if (checklistSavePending) return;
   const raw = await storageGet('latest_plan');
   if (!raw) return;
   const fresh = JSON.parse(raw);
+  if (checklistSavePending) return;
   // Only update if something actually changed (avoid unnecessary re-renders)
   if (JSON.stringify(fresh) !== JSON.stringify(planCache)) {
     planCache = fresh;
