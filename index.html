@@ -119,7 +119,7 @@
     background-image: url("/bg-1.jpeg");
     background-size: 320px auto;
     background-repeat: repeat;
-    opacity: 0.32;
+    opacity: 0.42;
     z-index: 0;
     mix-blend-mode: multiply;
   }
@@ -568,6 +568,18 @@
   }
   .display-action-btn.ooi-inline:active {
     background: linear-gradient(135deg, #C8421A 0%, #A82A18 100%);
+  }
+  .display-action-btn.produce-inline {
+    background: var(--sea-deep);
+    border-color: var(--sea-deep);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(31, 122, 110, 0.3);
+  }
+  .display-action-btn.dry-inline {
+    background: #8A6F4F;
+    border-color: #8A6F4F;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(138, 111, 79, 0.3);
   }
   
   /* Edit menu modal options */
@@ -1771,6 +1783,90 @@
     box-shadow: none;
   }
   .ooi-btn-secondary:active, .ooi-btn-primary:active { transform: scale(0.97); }
+
+  /* Structured inventory checks */
+  .inventory-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .inventory-disclaimer {
+    margin: 2px 0 14px;
+    padding: 12px 14px;
+    background: rgba(255, 252, 244, 0.9);
+    border: 1.5px solid rgba(217, 171, 91, 0.55);
+    border-radius: 12px;
+    color: var(--ink-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.45;
+    box-shadow: var(--shadow-soft);
+  }
+  .inventory-card {
+    padding: 12px;
+    background: rgba(255, 252, 244, 0.92);
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+  }
+  .inventory-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .inventory-status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .inventory-status-btn {
+    min-height: 48px;
+    padding: 10px 6px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: rgba(255, 252, 244, 0.8);
+    color: var(--ink-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+  .inventory-status-btn.selected {
+    color: #fff;
+    border-color: transparent;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.28), 0 4px 12px rgba(42,33,24,0.16);
+  }
+  .inventory-status-btn.good.selected { background: var(--sea); }
+  .inventory-status-btn.low.selected { background: var(--honey); }
+  .inventory-status-btn.order.selected { background: var(--coral); }
+  .inventory-note {
+    width: 100%;
+    margin-top: 9px;
+    padding: 11px 12px;
+    background: rgba(255, 252, 244, 0.86);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    outline: none;
+  }
+  .inventory-note:focus { border-color: var(--sea); }
+  .inventory-summary-box {
+    white-space: pre-wrap;
+    text-align: left;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    max-height: 46vh;
+    overflow-y: auto;
+  }
   .toast {
     position: fixed;
     top: 24px;
@@ -1947,6 +2043,45 @@
       <button class="ooi-btn-primary" id="freezer-copy">Copy list</button>
     </div>
     <button class="modal-cancel" onclick="closeFreezerModal()">Done</button>
+  </div>
+</div>
+
+<!-- STRUCTURED INVENTORY MODAL -->
+<div class="modal-backdrop" id="inventory-modal">
+  <div class="modal ooi-modal-inner" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="ooi-header">
+      <div>
+        <div class="modal-title" id="inventory-title">Inventory</div>
+        <div class="ooi-subtitle" id="inventory-subtitle">Tap each item status and add a quick note if needed.</div>
+      </div>
+    </div>
+    <div class="inventory-disclaimer">
+      In progress — this section is still being built out. Please keep using 86 / Restock for official ordering until this list is finalized.
+    </div>
+    <div class="inventory-list" id="inventory-list"><!-- populated by JS --></div>
+    <div class="ooi-meta" id="inventory-meta">—</div>
+    <div class="ooi-actions">
+      <button class="ooi-btn-secondary" id="inventory-undo">Undo last change</button>
+      <button class="ooi-btn-primary" id="inventory-complete">Complete Check</button>
+    </div>
+    <button class="modal-cancel" onclick="closeInventoryModal()">Done</button>
+  </div>
+</div>
+
+<!-- INVENTORY SUMMARY MODAL -->
+<div class="modal-backdrop" id="inventory-summary-modal">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="confirm-content">
+      <div class="confirm-title" id="inventory-summary-title">Check complete</div>
+      <div class="confirm-subtitle" id="inventory-summary-subtitle">No email has been sent.</div>
+      <div class="confirm-summary inventory-summary-box" id="inventory-summary-text"></div>
+      <div class="confirm-actions">
+        <button class="confirm-btn" id="inventory-summary-close">Done</button>
+        <button class="confirm-btn primary" id="inventory-summary-copy">Copy Summary</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2326,6 +2461,250 @@ async function clearDraft() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// STRUCTURED INVENTORY — Produce + Dry Goods
+// ═══════════════════════════════════════════════════════════════
+const SHOW_STANDALONE_OOI = true;
+const INVENTORY_STATUS = {
+  good: { value: 'GOOD', label: 'GOOD' },
+  low: { value: 'LOW', label: 'LOW' },
+  order: { value: '86 / ORDER', label: '86 / ORDER' },
+};
+const INVENTORY_SECTIONS = {
+  produce: {
+    title: 'Kitchen Produce',
+    completeLabel: 'Complete Produce Check',
+    storageKey: 'kitchen_produce_inventory',
+    items: [
+      { id: 'tomatoes', name: 'Tomatoes' },
+      { id: 'greens', name: 'Mixed greens' },
+      { id: 'romaine', name: 'Romaine' },
+      { id: 'cabbage', name: 'Cabbage' },
+      { id: 'onions', name: 'Onions' },
+      { id: 'green-onions', name: 'Green onions' },
+      { id: 'cilantro', name: 'Cilantro' },
+      { id: 'parsley', name: 'Parsley' },
+      { id: 'avocado', name: 'Avocado' },
+      { id: 'lemons-limes', name: 'Lemons / limes' },
+    ],
+  },
+  dry: {
+    title: 'Dry Goods',
+    completeLabel: 'Complete Dry Goods Check',
+    storageKey: 'dry_goods_inventory',
+    items: [
+      { id: 'rice', name: 'Rice' },
+      { id: 'quinoa', name: 'Quinoa' },
+      { id: 'panko', name: 'Panko' },
+      { id: 'flour', name: 'Flour' },
+      { id: 'sugar', name: 'Sugar' },
+      { id: 'brewers-yeast', name: "Brewer's yeast" },
+      { id: 'paprika', name: 'Paprika' },
+      { id: 'gochujang', name: 'Gochujang' },
+      { id: 'soy-sauce', name: 'Soy sauce' },
+      { id: 'to-go-boxes', name: 'To-go boxes' },
+    ],
+  },
+};
+
+let inventoryKind = null;
+let inventoryState = { items: {} };
+let inventoryUndo = null;
+let inventorySaveTimer = null;
+let inventorySummaryText = '';
+
+async function loadInventory(kind) {
+  const section = INVENTORY_SECTIONS[kind];
+  const raw = await storageGet(section.storageKey);
+  if (!raw) return { items: {}, updatedAt: null, updatedBy: null };
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      items: parsed.items || {},
+      updatedAt: parsed.updatedAt || null,
+      updatedBy: parsed.updatedBy || null,
+      completedAt: parsed.completedAt || null,
+      completedBy: parsed.completedBy || null,
+    };
+  } catch {
+    return { items: {}, updatedAt: null, updatedBy: null };
+  }
+}
+
+async function saveInventory(kind, state, complete = false) {
+  const section = INVENTORY_SECTIONS[kind];
+  const now = new Date().toISOString();
+  const data = {
+    items: state.items || {},
+    updatedAt: now,
+    updatedBy: cookHandle || null,
+    completedAt: complete ? now : state.completedAt || null,
+    completedBy: complete ? cookHandle || null : state.completedBy || null,
+  };
+  inventoryState = { ...state, ...data };
+  return await storageSet(section.storageKey, JSON.stringify(data));
+}
+
+function normalizeInventoryEntry(entry) {
+  return {
+    status: entry && entry.status ? entry.status : 'GOOD',
+    note: entry && entry.note ? entry.note : '',
+  };
+}
+
+function rememberInventoryUndo(id) {
+  inventoryUndo = {
+    id,
+    previous: inventoryState.items[id] ? { ...inventoryState.items[id] } : null,
+  };
+  const btn = document.getElementById('inventory-undo');
+  if (btn) btn.disabled = false;
+}
+
+function debouncedSaveInventory() {
+  clearTimeout(inventorySaveTimer);
+  inventorySaveTimer = setTimeout(async () => {
+    await saveInventory(inventoryKind, inventoryState);
+    refreshInventoryMeta();
+  }, 500);
+}
+
+function refreshInventoryMeta() {
+  const el = document.getElementById('inventory-meta');
+  if (!el || !inventoryKind) return;
+  const entries = Object.values(inventoryState.items || {});
+  const touched = entries.filter(entry => entry && (entry.status || entry.note)).length;
+  const low = entries.filter(entry => entry && entry.status === 'LOW').length;
+  const order = entries.filter(entry => entry && entry.status === '86 / ORDER').length;
+  const stamp = inventoryState.updatedAt ? formatPostedTime(inventoryState.updatedAt) : 'just now';
+  const who = inventoryState.updatedBy ? ` by @${inventoryState.updatedBy}` : '';
+  el.textContent = `${touched} checked · ${low} LOW · ${order} 86 / ORDER · updated ${stamp}${who}`;
+}
+
+function renderInventoryList() {
+  const section = INVENTORY_SECTIONS[inventoryKind];
+  const root = document.getElementById('inventory-list');
+  root.innerHTML = section.items.map(item => {
+    const entry = normalizeInventoryEntry(inventoryState.items[item.id]);
+    return `
+      <div class="inventory-card">
+        <div class="inventory-name">${escapeHtml(item.name)}</div>
+        <div class="inventory-status-grid">
+          ${Object.values(INVENTORY_STATUS).map(status => `
+            <button class="inventory-status-btn ${status.value === 'GOOD' ? 'good' : status.value === 'LOW' ? 'low' : 'order'} ${entry.status === status.value ? 'selected' : ''}"
+              onclick="setInventoryStatus('${item.id}', '${status.value}')">${status.label}</button>
+          `).join('')}
+        </div>
+        <input class="inventory-note" type="text" value="${escapeHtml(entry.note)}" placeholder="note / qty"
+          autocomplete="off" oninput="setInventoryNote('${item.id}', this.value)">
+      </div>
+    `;
+  }).join('');
+  refreshInventoryMeta();
+}
+
+async function openInventoryModal(kind) {
+  inventoryKind = kind;
+  const section = INVENTORY_SECTIONS[kind];
+  const data = await loadInventory(kind);
+  inventoryState = { ...data, items: { ...data.items } };
+  inventoryUndo = null;
+  document.getElementById('inventory-title').textContent = section.title;
+  document.getElementById('inventory-complete').textContent = section.completeLabel;
+  document.getElementById('inventory-undo').disabled = true;
+  renderInventoryList();
+  const modal = document.getElementById('inventory-modal');
+  modal.classList.add('show');
+  setTimeout(() => {
+    const inner = modal.querySelector('.ooi-modal-inner');
+    if (inner) inner.scrollTop = 0;
+  }, 50);
+}
+
+function closeInventoryModal() {
+  document.getElementById('inventory-modal').classList.remove('show');
+}
+
+function setInventoryStatus(id, status) {
+  if (!inventoryKind) return;
+  rememberInventoryUndo(id);
+  inventoryState.items[id] = { ...normalizeInventoryEntry(inventoryState.items[id]), status };
+  inventoryState.updatedAt = new Date().toISOString();
+  inventoryState.updatedBy = cookHandle || null;
+  renderInventoryList();
+  debouncedSaveInventory();
+}
+
+function setInventoryNote(id, note) {
+  if (!inventoryKind) return;
+  rememberInventoryUndo(id);
+  inventoryState.items[id] = { ...normalizeInventoryEntry(inventoryState.items[id]), note };
+  inventoryState.updatedAt = new Date().toISOString();
+  inventoryState.updatedBy = cookHandle || null;
+  debouncedSaveInventory();
+  refreshInventoryMeta();
+}
+
+function undoInventoryChange() {
+  if (!inventoryUndo || !inventoryKind) return;
+  if (inventoryUndo.previous) inventoryState.items[inventoryUndo.id] = inventoryUndo.previous;
+  else delete inventoryState.items[inventoryUndo.id];
+  inventoryState.updatedAt = new Date().toISOString();
+  inventoryState.updatedBy = cookHandle || null;
+  inventoryUndo = null;
+  document.getElementById('inventory-undo').disabled = true;
+  renderInventoryList();
+  debouncedSaveInventory();
+  showToast('Last change undone');
+}
+
+function buildInventorySummary(kind) {
+  const section = INVENTORY_SECTIONS[kind];
+  const lines = [
+    section.title,
+    `Completed: ${new Date().toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}`,
+    `Cook: ${cookHandle ? '@' + cookHandle : 'not set'}`,
+    '',
+  ];
+  const buckets = { '86 / ORDER': [], LOW: [], GOOD: [] };
+  section.items.forEach(item => {
+    const entry = normalizeInventoryEntry(inventoryState.items[item.id]);
+    const note = entry.note && entry.note.trim() ? ` — ${entry.note.trim()}` : '';
+    buckets[entry.status].push(`${item.name}${note}`);
+  });
+  lines.push(`GOOD count: ${buckets.GOOD.length}`);
+  ['86 / ORDER', 'LOW'].forEach(status => {
+    lines.push('', status);
+    if (buckets[status].length === 0) lines.push('  - None');
+    else buckets[status].forEach(name => lines.push(`  - ${name}`));
+  });
+  return lines.join('\n');
+}
+
+async function completeInventoryCheck() {
+  if (!inventoryKind) return;
+  await saveInventory(inventoryKind, inventoryState, true);
+  inventorySummaryText = buildInventorySummary(inventoryKind);
+  document.getElementById('inventory-summary-title').textContent = `${INVENTORY_SECTIONS[inventoryKind].title} complete`;
+  document.getElementById('inventory-summary-text').textContent = inventorySummaryText;
+  document.getElementById('inventory-summary-modal').classList.add('show');
+  showToast('Summary ready to copy');
+}
+
+async function copyInventorySummary() {
+  if (!inventorySummaryText) return;
+  try {
+    await navigator.clipboard.writeText(inventorySummaryText);
+    showToast('Copied — paste into Break Room');
+  } catch {
+    showToast('Copy failed');
+  }
+}
+
+function closeInventorySummary() {
+  document.getElementById('inventory-summary-modal').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════════
 // OUT OF ITEMS — shared notepad
 // ═══════════════════════════════════════════════════════════════
 async function loadOoi() {
@@ -2565,7 +2944,7 @@ function renderFreezerChecklist() {
   FREEZER_TEMPLATE.forEach(group => {
     html += `<div class="freezer-cat"><div class="freezer-cat-label">${group.cat}</div>`;
     group.items.forEach(item => {
-      const state = freezerState.items[item.id] || { checked: false, qty: '' };
+      const state = freezerState.items[item.id] || { checked: false, qty: '', status: 'GOOD' };
       const checkedClass = state.checked ? 'checked' : '';
       const checkContent = state.checked ? '✓' : '';
       html += `
@@ -2584,7 +2963,8 @@ function renderFreezerChecklist() {
 }
 
 function toggleFreezerCheck(id) {
-  if (!freezerState.items[id]) freezerState.items[id] = { checked: false, qty: '' };
+  if (!freezerState.items[id]) freezerState.items[id] = { checked: false, qty: '', status: 'GOOD' };
+  if (!freezerState.items[id].status) freezerState.items[id].status = 'GOOD';
   freezerState.items[id].checked = !freezerState.items[id].checked;
   freezerState._lastStamp = new Date().toISOString();
   freezerState._lastBy = cookHandle || null;
@@ -2604,7 +2984,8 @@ function toggleFreezerCheck(id) {
 }
 
 function updateFreezerQty(id, val) {
-  if (!freezerState.items[id]) freezerState.items[id] = { checked: false, qty: '' };
+  if (!freezerState.items[id]) freezerState.items[id] = { checked: false, qty: '', status: 'GOOD' };
+  if (!freezerState.items[id].status) freezerState.items[id].status = 'GOOD';
   freezerState.items[id].qty = val;
   freezerState._lastStamp = new Date().toISOString();
   freezerState._lastBy = cookHandle || null;
@@ -2793,6 +3174,30 @@ async function submitHandle() {
   }
 }
 
+function inventoryActionButtons() {
+  return `
+    <button class="display-action-btn produce-inline" onclick="openInventoryModal('produce')">
+      <span class="action-icon">🥬</span>
+      <span>Kitchen Produce</span>
+    </button>
+    <button class="display-action-btn dry-inline" onclick="openInventoryModal('dry')">
+      <span class="action-icon">📦</span>
+      <span>Dry Goods</span>
+    </button>
+  `;
+}
+
+function ooiActionButton() {
+  if (!SHOW_STANDALONE_OOI) return '';
+  return `
+    <button class="display-action-btn ooi-inline" onclick="openOoiModal()">
+      <span class="action-icon">📝</span>
+      <span>86 / Restock</span>
+      <span class="action-count" id="inline-ooi-count" style="display:none">0</span>
+    </button>
+  `;
+}
+
 // ═══════════════════════════════════════════════════════════════
 // VIEW: DISPLAY — shows latest posted plan, read-only
 // ═══════════════════════════════════════════════════════════════
@@ -2814,16 +3219,13 @@ async function renderDisplay() {
         <button class="empty-state-cta" onclick="planMode='next'; switchView('plan')">+ New prep list</button>
       </div>
       <div class="display-actions">
+        ${inventoryActionButtons()}
         <button class="display-action-btn freezer-inline" onclick="openFreezerModal()">
           <span class="action-icon">❄️</span>
           <span>Freezer Stock</span>
           <span class="action-count" id="inline-freezer-count" style="display:none">0</span>
         </button>
-        <button class="display-action-btn ooi-inline" onclick="openOoiModal()">
-          <span class="action-icon">📝</span>
-          <span>86 / Restock</span>
-          <span class="action-count" id="inline-ooi-count" style="display:none">0</span>
-        </button>
+        ${ooiActionButton()}
         <button class="display-action-btn refresh-inline" data-update-indicator onclick="checkForUpdate()">
           <span class="action-icon">🔄</span>
           <span>Refresh</span>
@@ -2964,16 +3366,13 @@ async function renderDisplay() {
   // Inline actions at bottom — freezer, 86, edit
   html += `
     <div class="display-actions">
+      ${inventoryActionButtons()}
       <button class="display-action-btn freezer-inline" onclick="openFreezerModal()">
         <span class="action-icon">❄️</span>
         <span>Freezer Stock</span>
         <span class="action-count" id="inline-freezer-count" style="display:none">0</span>
       </button>
-      <button class="display-action-btn ooi-inline" onclick="openOoiModal()">
-        <span class="action-icon">📝</span>
-        <span>86 / Restock</span>
-        <span class="action-count" id="inline-ooi-count" style="display:none">0</span>
-      </button>
+      ${ooiActionButton()}
       <button class="display-action-btn" onclick="openEditMenu()">⋯ Edit list</button>
       <button class="display-action-btn refresh-inline" data-update-indicator onclick="checkForUpdate()">
         <span class="action-icon">🔄</span>
@@ -3125,16 +3524,13 @@ async function renderPlan() {
   // Inline access to freezer / 86 / clear-draft while planning (so cooks can peek without posting first)
   html += `
     <div class="display-actions plan-actions">
+      ${inventoryActionButtons()}
       <button class="display-action-btn freezer-inline" onclick="openFreezerModal()">
         <span class="action-icon">❄️</span>
         <span>Freezer Stock</span>
         <span class="action-count" data-badge="freezer" style="display:none">0</span>
       </button>
-      <button class="display-action-btn ooi-inline" onclick="openOoiModal()">
-        <span class="action-icon">📝</span>
-        <span>86 / Restock</span>
-        <span class="action-count" data-badge="ooi" style="display:none">0</span>
-      </button>
+      ${ooiActionButton()}
     </div>
   `;
 
@@ -3407,6 +3803,12 @@ document.getElementById('freezer-overflow').addEventListener('input', (e) => {
 document.getElementById('freezer-copy').addEventListener('click', copyFreezer);
 document.getElementById('freezer-clear').addEventListener('click', clearFreezer);
 document.getElementById('freezer-modal').addEventListener('click', closeFreezerModal);
+document.getElementById('inventory-undo').addEventListener('click', undoInventoryChange);
+document.getElementById('inventory-complete').addEventListener('click', completeInventoryCheck);
+document.getElementById('inventory-modal').addEventListener('click', closeInventoryModal);
+document.getElementById('inventory-summary-close').addEventListener('click', closeInventorySummary);
+document.getElementById('inventory-summary-copy').addEventListener('click', copyInventorySummary);
+document.getElementById('inventory-summary-modal').addEventListener('click', closeInventorySummary);
 document.getElementById('edit-menu-modal').addEventListener('click', closeEditMenu);
 
 (async () => {
@@ -3423,7 +3825,7 @@ renderDisplay();
 // Bump APP_VERSION every time you push an edit to GitHub.
 // Format: YYYY.MM.DD.N  (N = edit number that day)
 // ═══════════════════════════════════════════════════════════════
-const APP_VERSION = "2026.05.27.1";
+const APP_VERSION = "2026.07.03.1";
 
 // Manual refresh — bypasses cache by forcing a fresh fetch
 function checkForUpdate() {
