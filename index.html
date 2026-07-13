@@ -245,6 +245,143 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* MAIN DASHBOARD + SECTION NAVIGATION */
+  .dashboard-intro {
+    margin: 24px 0 18px;
+    padding: 22px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #2A2118 0%, #46372A 100%);
+    color: var(--paper);
+    box-shadow: var(--shadow-card);
+  }
+  .dashboard-kicker {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--honey);
+  }
+  .dashboard-title {
+    margin-top: 6px;
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.05;
+  }
+  .dashboard-subtitle {
+    margin-top: 7px;
+    color: rgba(251, 245, 233, 0.72);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .dashboard-grid {
+    display: grid;
+    gap: 12px;
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  }
+  .dashboard-button {
+    width: 100%;
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 17px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: 17px;
+    background: rgba(255, 252, 244, 0.94);
+    color: var(--ink);
+    box-shadow: var(--shadow-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.035em;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dashboard-button:active {
+    transform: scale(0.985);
+    background: var(--paper-warm);
+  }
+  .dashboard-button::after {
+    content: '›';
+    flex-shrink: 0;
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink-faint);
+  }
+  .dashboard-button.produce { border-left: 7px solid #6E8B3D; }
+  .dashboard-button.freezer { border-left: 7px solid var(--sea); }
+  .dashboard-button.restock { border-left: 7px solid #C8421A; }
+  .dashboard-button.roster { border-left: 7px solid var(--honey); }
+  .dashboard-button.prep { border-left: 7px solid var(--coral); }
+  .back-to-main {
+    width: 100%;
+    min-height: 48px;
+    margin: 14px 0 4px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--ink);
+    border-radius: 13px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.075em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .back-to-main:active { transform: scale(0.985); }
+  .modal .back-to-main {
+    margin: 0 0 14px;
+  }
+  .prep-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+    margin: 14px 0 18px;
+  }
+  .prep-action-btn {
+    width: 100%;
+    min-height: 52px;
+    padding: 13px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 13px;
+    background: rgba(255, 252, 244, 0.94);
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.25;
+    text-align: center;
+    cursor: pointer;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .prep-action-btn:active {
+    transform: scale(0.985);
+    background: var(--paper-warm);
+  }
+  .prep-action-btn.back {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  @media (min-width: 620px) {
+    .prep-actions {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
   /* TODAY VIEW — warm welcome banner */
   .day-banner {
     margin: 22px 0 22px;
@@ -568,6 +705,15 @@
   }
   .display-action-btn.ooi-inline:active {
     background: linear-gradient(135deg, #C8421A 0%, #A82A18 100%);
+  }
+  .display-action-btn.produce-inline {
+    background: linear-gradient(135deg, #6E8B3D 0%, #4F6F2E 100%);
+    border-color: #4F6F2E;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(79, 111, 46, 0.3);
+  }
+  .display-action-btn.produce-inline:active {
+    background: linear-gradient(135deg, #607D35 0%, #456327 100%);
   }
   
   /* Edit menu modal options */
@@ -1072,15 +1218,19 @@
   }
   .handle-row-remove {
     flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: transparent;
-    color: var(--ink-faint);
-    font-size: 18px;
-    line-height: 1;
+    min-width: 82px;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1.5px solid rgba(221, 89, 68, 0.32);
+    background: rgba(221, 89, 68, 0.07);
+    color: var(--coral);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
     cursor: pointer;
-    border-radius: 999px;
+    border-radius: 12px;
     transition: all 0.15s ease;
     -webkit-tap-highlight-color: transparent;
   }
@@ -1091,6 +1241,164 @@
   
   .handle-add-section {
     margin-top: 8px;
+  }
+
+  /* PRODUCE CHECK */
+  .produce-modal-inner {
+    max-height: min(88vh, 820px);
+    overflow-y: auto;
+  }
+  .produce-toolbar {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0 16px;
+  }
+  .produce-toolbar .ooi-btn-secondary,
+  .produce-toolbar .ooi-btn-primary {
+    min-height: 46px;
+  }
+  .produce-list {
+    display: grid;
+    gap: 10px;
+  }
+  .produce-section + .produce-section {
+    margin-top: 18px;
+  }
+  .produce-section-heading {
+    margin: 0 2px 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(79, 111, 46, 0.3);
+    color: #4F6F2E;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+  .produce-section-items {
+    display: grid;
+    gap: 10px;
+  }
+  .produce-row {
+    padding: 13px;
+    background: rgba(255, 252, 244, 0.86);
+    border: 1.5px solid var(--line);
+    border-radius: 15px;
+  }
+  .produce-row-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .produce-statuses {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+  .produce-status {
+    min-height: 44px;
+    padding: 8px 5px;
+    border-radius: 11px;
+    border: 1.5px solid var(--line);
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+  }
+  .produce-status.active.low {
+    background: var(--honey-bg);
+    border-color: var(--honey);
+    color: #8A5B16;
+  }
+  .produce-status.active.urgent {
+    background: var(--coral-bg);
+    border-color: var(--coral);
+    color: #A63E2F;
+  }
+  .produce-note {
+    width: 100%;
+    margin-top: 9px;
+    padding: 11px 12px;
+    border: 1.5px solid var(--line);
+    border-radius: 11px;
+    background: #fffdf8;
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+  }
+  .produce-note:focus {
+    border-color: #6E8B3D;
+  }
+  .produce-complete-btn {
+    width: 100%;
+    min-height: 54px;
+    margin-top: 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #6E8B3D 0%, #4F6F2E 100%);
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 5px 16px rgba(79, 111, 46, 0.28);
+  }
+  .produce-report {
+    margin-bottom: 16px;
+    padding: 14px;
+    border: 1.5px solid rgba(79, 111, 46, 0.34);
+    border-radius: 15px;
+    background: rgba(110, 139, 61, 0.08);
+  }
+  .produce-report-title {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .produce-report-stamp {
+    margin: 3px 0 12px;
+    color: var(--ink-faint);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .produce-report-group + .produce-report-group {
+    margin-top: 12px;
+  }
+  .produce-report-label {
+    margin-bottom: 5px;
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .produce-report-item {
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(79, 111, 46, 0.18);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .produce-report-item:last-child { border-bottom: none; }
+  .produce-report-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .produce-empty-report {
+    padding: 14px 4px 4px;
+    color: var(--ink-faint);
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: center;
   }
 
   .category-section {
@@ -1817,7 +2125,7 @@
 
 <div class="app">
   <header>
-    <div class="brand"><div class="brand-tag" id="brand-tag">Tomorrow's prep<span id="today-stamp">—</span></div></div>
+    <div class="brand"><div class="brand-tag" id="brand-tag">Team dashboard<span id="today-stamp">—</span></div></div>
     <div class="logo-stack">
       <img class="brand-logo" src="/logo.png" alt="HĀ CAFE">
       <div class="proverb-haw">“Aʻohe hana nui ke alu ʻia”</div>
@@ -1826,8 +2134,29 @@
   </header>
 
   <main>
+    <!-- MAIN DASHBOARD — default view on every load and refresh -->
+    <section class="view active" id="view-main">
+      <div class="dashboard-intro">
+        <div class="dashboard-kicker">HĀ Café Team Tools</div>
+        <div class="dashboard-title">What are you working on?</div>
+        <div class="dashboard-subtitle">Choose a section. Every workflow includes a direct way back here.</div>
+      </div>
+      <div class="dashboard-grid">
+        <button class="dashboard-button prep" onclick="switchView('display')">TOMORROW’S PREP</button>
+        <button class="dashboard-button produce" onclick="openProduceModal()">PRODUCE CHECK</button>
+        <button class="dashboard-button freezer" onclick="openFreezerModal()">FREEZER STOCK</button>
+        <button class="dashboard-button restock" onclick="openOoiModal()">86 / RESTOCK</button>
+        <button class="dashboard-button roster" onclick="openHandleModal()">COOK ROSTER</button>
+      </div>
+    </section>
+
     <!-- DISPLAY VIEW — shows the latest posted plan (read-only) -->
-    <section class="view active" id="view-display">
+    <section class="view" id="view-display">
+      <div class="prep-actions">
+        <button class="prep-action-btn" data-update-indicator onclick="checkForUpdate()">REFRESH CURRENT LIST</button>
+        <button class="prep-action-btn" onclick="openEditMenu()">EDIT LIST</button>
+        <button class="prep-action-btn back" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
+      </div>
       <div id="display-content">
         <div class="loading">Loading…</div>
       </div>
@@ -1835,7 +2164,11 @@
 
     <!-- PLANNER VIEW -->
     <section class="view" id="view-plan">
-      <button class="plan-back" onclick="switchView('display')">← Back</button>
+      <div class="prep-actions">
+        <button class="prep-action-btn" data-update-indicator onclick="checkForUpdate()">REFRESH CURRENT LIST</button>
+        <button class="prep-action-btn" onclick="openEditMenu()">EDIT LIST</button>
+        <button class="prep-action-btn back" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
+      </div>
       <div class="plan-intro">
         <div class="plan-intro-label">Tomorrow's prep</div>
         <div class="plan-intro-title" id="plan-target-date">—</div>
@@ -1872,6 +2205,7 @@
 <div class="modal-backdrop" id="priority-modal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
+    <button class="back-to-main" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
     <div class="modal-title">Set Priority For</div>
     <div class="modal-item-name" id="modal-item-name">—</div>
     <div class="priority-options">
@@ -1906,6 +2240,7 @@
 <div class="modal-backdrop" id="confirm-modal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
+      <button class="back-to-main" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
       <div class="confirm-content">
         <div class="confirm-title">Send tomorrow's prep?</div>
         <div class="confirm-subtitle" id="confirm-date">—</div>
@@ -1920,10 +2255,34 @@
 
 <!-- Floating FAB buttons removed — now inline at bottom of display list -->
 
+<!-- PRODUCE CHECK MODAL -->
+<div class="modal-backdrop" id="produce-modal">
+  <div class="modal produce-modal-inner" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <button class="back-to-main" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
+    <div class="ooi-header">
+      <div>
+        <div class="modal-title">Produce Check</div>
+        <div class="ooi-subtitle">Mark only items that are LOW or URGENT. Unmarked items have no issue. Add an optional quantity or note.</div>
+      </div>
+    </div>
+    <div id="produce-latest-report"></div>
+    <div class="produce-toolbar">
+      <button class="ooi-btn-secondary" id="produce-new-check">START NEW LIST</button>
+      <button class="ooi-btn-secondary" id="produce-clear-check">RESET THIS LIST</button>
+      <button class="ooi-btn-secondary" id="produce-clear-report">CLEAR SUBMITTED REPORT</button>
+    </div>
+    <div class="produce-list" id="produce-list"><!-- populated by JS --></div>
+    <button class="produce-complete-btn" id="produce-complete">COMPLETE PRODUCE CHECK</button>
+    <button class="modal-cancel" onclick="closeProduceModal()">Done</button>
+  </div>
+</div>
+
 <!-- FREEZER INVENTORY MODAL -->
 <div class="modal-backdrop" id="freezer-modal">
   <div class="modal ooi-modal-inner" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
+    <button class="back-to-main" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
     <div class="ooi-header">
       <div>
         <div class="modal-title">Freezer stock</div>
@@ -1954,6 +2313,7 @@
 <div class="modal-backdrop" id="ooi-modal">
   <div class="modal ooi-modal-inner" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
+    <button class="back-to-main" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
     <div class="ooi-header">
       <div>
         <div class="modal-title">86 / Restock list</div>
@@ -1980,6 +2340,7 @@
 <div class="modal-backdrop" id="edit-menu-modal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
+    <button class="back-to-main" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
     <div class="modal-title">List actions</div>
     <button class="edit-menu-option" onclick="startNextList()">
       <span class="edit-menu-icon">📋</span>
@@ -2010,6 +2371,7 @@
 <div class="modal-backdrop" id="handle-modal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
+    <button class="back-to-main" onclick="goToMainPage()">BACK TO MAIN PAGE</button>
     <div class="modal-title">Pick your handle</div>
     
     <div class="handle-picker" id="handle-picker">
@@ -2029,7 +2391,7 @@
     
     <div class="confirm-actions" id="handle-main-actions">
       <button class="confirm-btn" id="handle-cancel">Cancel</button>
-      <button class="confirm-btn primary" id="handle-add-new-btn" onclick="showAddHandleSection()">+ Add new cook</button>
+      <button class="confirm-btn primary" id="handle-add-new-btn" onclick="showAddHandleSection()">ADD COOK</button>
     </div>
   </div>
 </div>
@@ -2201,14 +2563,10 @@ async function loadLatestPlan() {
   return parsed;
 }
 
-// A plan is "active" for 23 hours from the moment it was posted.
-// Posting a new plan replaces the old one and starts a fresh 23-hour clock.
-// After the timer runs out, the display goes back to the empty state.
+// Prep lists reset at 5:00 PM every day in Hawaiʻi, regardless of device timezone.
 function isPlanActive(plan) {
   if (!plan || !plan.postedAt) return false;
-  const postedAt = new Date(plan.postedAt);
-  const expiresAt = new Date(postedAt.getTime() + 23 * 60 * 60 * 1000);
-  return new Date() < expiresAt;
+  return new Date(plan.postedAt) >= lastResetTime();
 }
 
 async function saveLatestPlan(data) {
@@ -2256,11 +2614,13 @@ async function saveHandleRoster(handles) {
 async function addHandleToRoster(h) {
   if (!h) return;
   const roster = await loadHandleRoster();
-  if (!roster.includes(h)) {
+  const existing = roster.find(name => name.toLocaleLowerCase() === h.toLocaleLowerCase());
+  if (!existing) {
     roster.push(h);
     roster.sort((a, b) => a.localeCompare(b));
     await saveHandleRoster(roster);
   }
+  return existing || h;
 }
 
 async function removeHandleFromRoster(h) {
@@ -2283,25 +2643,60 @@ function updateHandleUI() {
   }
 }
 
-// 6pm daily reset — returns the most recent 6pm boundary
+const HONOLULU_TIME_ZONE = 'Pacific/Honolulu';
+
+function honoluluDateParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: HONOLULU_TIME_ZONE,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(date);
+  return Object.fromEntries(parts.filter(part => part.type !== 'literal').map(part => [part.type, Number(part.value)]));
+}
+
+function honoluluResetForDate(year, month, day) {
+  // Hawaiʻi does not observe DST; 5:00 PM HST is always 03:00 UTC the next day.
+  return new Date(Date.UTC(year, month - 1, day, 27, 0, 0, 0));
+}
+
+function shiftHonoluluDate(parts, days) {
+  const shifted = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days, 12));
+  return {
+    year: shifted.getUTCFullYear(),
+    month: shifted.getUTCMonth() + 1,
+    day: shifted.getUTCDate(),
+  };
+}
+
+// 5pm Hawaiʻi daily reset — returns the most recent boundary.
 function lastResetTime() {
   const now = new Date();
-  const todaySix = new Date(now);
-  todaySix.setHours(18, 0, 0, 0);
-  if (now >= todaySix) return todaySix;
-  const yest = new Date(todaySix);
-  yest.setDate(yest.getDate() - 1);
-  return yest;
+  const today = honoluluDateParts(now);
+  const todayReset = honoluluResetForDate(today.year, today.month, today.day);
+  if (now >= todayReset) return todayReset;
+  const yesterday = shiftHonoluluDate(today, -1);
+  return honoluluResetForDate(yesterday.year, yesterday.month, yesterday.day);
 }
 
 function nextResetTime() {
   const now = new Date();
-  const todaySix = new Date(now);
-  todaySix.setHours(18, 0, 0, 0);
-  if (now < todaySix) return todaySix;
-  const tom = new Date(todaySix);
-  tom.setDate(tom.getDate() + 1);
-  return tom;
+  const today = honoluluDateParts(now);
+  const todayReset = honoluluResetForDate(today.year, today.month, today.day);
+  if (now < todayReset) return todayReset;
+  const tomorrow = shiftHonoluluDate(today, 1);
+  return honoluluResetForDate(tomorrow.year, tomorrow.month, tomorrow.day);
+}
+
+let prepResetTimer = null;
+function scheduleHonoluluPrepReset() {
+  clearTimeout(prepResetTimer);
+  const delay = Math.max(0, nextResetTime().getTime() - Date.now()) + 250;
+  prepResetTimer = setTimeout(async () => {
+    planCache = null;
+    if (activeView === 'display') await renderDisplay();
+    scheduleHonoluluPrepReset();
+  }, delay);
 }
 
 async function loadDraft() {
@@ -2309,7 +2704,7 @@ async function loadDraft() {
   if (!raw) return null;
   try {
     const { draft, savedAt } = JSON.parse(raw);
-    if (new Date(savedAt) < lastResetTime()) return null; // stale, post-6pm boundary
+    if (new Date(savedAt) < lastResetTime()) return null; // stale, post-5pm Hawaiʻi boundary
     return draft;
   } catch { return null; }
 }
@@ -2438,6 +2833,365 @@ async function clearOoi() {
   refreshOoiMeta('', null, null);
   showToast('List cleared');
   updateOoiBadge();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PRODUCE CHECK — shared working check + preserved official report
+// ═══════════════════════════════════════════════════════════════
+const PRODUCE_SECTIONS = [
+  { name: 'CHEF’S PRODUCE', items: [
+    { id: 'garlic', name: 'Garlic' },
+    { id: 'potatoes', name: 'Potatoes' },
+    { id: 'yellow-onion', name: 'Yellow Onion' },
+    { id: 'red-onion', name: 'Red Onion' },
+    { id: 'avocados', name: 'Avocados' },
+    { id: 'tomatoes', name: 'Tomatoes' },
+    { id: 'cherry-tomatoes', name: 'Cherry Tomatoes' },
+    { id: 'red-cabbage', name: 'Red Cabbage' },
+    { id: 'clover-sprouts', name: 'Clover Sprouts' },
+    { id: 'cilantro', name: 'Cilantro' },
+    { id: 'red-bell-pepper', name: 'Red Bell Pepper' },
+    { id: 'spinach', name: 'Spinach' },
+    { id: 'basil', name: 'Basil' },
+    { id: 'lettuce', name: 'Lettuce' },
+    { id: 'pineapple', name: 'Pineapple' },
+    { id: 'bananas', name: 'Bananas' },
+  ]},
+  { name: 'JUICING PRODUCE', items: [
+    { id: 'kale', name: 'Kale' },
+    { id: 'cucumber', name: 'Cucumber' },
+    { id: 'carrots', name: 'Carrots' },
+    { id: 'celery', name: 'Celery' },
+    { id: 'parsley', name: 'Parsley' },
+    { id: 'ginger', name: 'Ginger' },
+    { id: 'turmeric', name: 'Turmeric' },
+    { id: 'oranges', name: 'Oranges' },
+    { id: 'lemons', name: 'Lemons' },
+  ]},
+];
+const PRODUCE_ITEMS = PRODUCE_SECTIONS.flatMap(section => section.items);
+
+let produceDraft = { items: {}, updatedAt: null, updatedBy: null };
+let produceSaveTimer = null;
+let produceSavePromise = Promise.resolve();
+
+async function loadProduceDraft() {
+  const raw = await storageGet('produce_check_draft');
+  if (!raw) return { items: {}, updatedAt: null, updatedBy: null };
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      items: parsed.items || {},
+      updatedAt: parsed.updatedAt || null,
+      updatedBy: parsed.updatedBy || null,
+    };
+  } catch {
+    return { items: {}, updatedAt: null, updatedBy: null };
+  }
+}
+
+async function postProduceDraft(value) {
+  const response = await fetch(STORAGE_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key: 'produce_check_draft', value }),
+  });
+  if (!response.ok) throw new Error(`Produce draft POST failed with ${response.status}`);
+  const result = await response.json();
+  if (!result || result.ok !== true) throw new Error('Produce draft POST was not confirmed');
+  memStore.produce_check_draft = value;
+  try { localStorage.setItem('ha:produce_check_draft', value); } catch {}
+}
+
+async function saveProduceDraft() {
+  produceDraft.updatedAt = new Date().toISOString();
+  produceDraft.updatedBy = cookHandle || null;
+  const value = JSON.stringify(produceDraft);
+  produceSavePromise = produceSavePromise.catch(() => {}).then(async () => {
+    try {
+      await postProduceDraft(value);
+    } catch (error) {
+      console.warn('Produce draft autosave failed:', error.message);
+    }
+  });
+  return await produceSavePromise;
+}
+
+async function cancelPendingProduceAutosaves() {
+  clearTimeout(produceSaveTimer);
+  produceSaveTimer = null;
+  await produceSavePromise.catch(() => {});
+  produceSavePromise = Promise.resolve();
+}
+
+async function loadLatestProduceReport() {
+  const raw = await storageGet('latest_produce_report');
+  if (!raw) return null;
+  try { return JSON.parse(raw); }
+  catch { return null; }
+}
+
+async function postLatestProduceReport(report) {
+  const value = JSON.stringify(report);
+  const response = await fetch(STORAGE_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key: 'latest_produce_report', value }),
+  });
+  if (!response.ok) {
+    throw new Error(`Produce report POST failed with ${response.status}`);
+  }
+  const result = await response.json();
+  if (!result || result.ok !== true) {
+    throw new Error('Produce report POST was not confirmed');
+  }
+  memStore.latest_produce_report = value;
+  try { localStorage.setItem('ha:latest_produce_report', value); } catch {}
+  return report;
+}
+
+function debouncedSaveProduceDraft() {
+  clearTimeout(produceSaveTimer);
+  produceSaveTimer = setTimeout(() => {
+    produceSaveTimer = null;
+    saveProduceDraft();
+  }, 450);
+}
+
+function renderProduceList() {
+  const root = document.getElementById('produce-list');
+  root.innerHTML = PRODUCE_SECTIONS.map(section => `
+    <section class="produce-section">
+      <div class="produce-section-heading">${escapeHtml(section.name)}</div>
+      <div class="produce-section-items">
+        ${section.items.map(item => {
+          const state = produceDraft.items[item.id] || { status: '', note: '' };
+          return `
+            <div class="produce-row">
+              <div class="produce-row-name">${escapeHtml(item.name)}</div>
+              <div class="produce-statuses">
+                ${['low', 'urgent'].map(status => `
+                  <button class="produce-status ${status} ${state.status === status ? 'active' : ''}"
+                    data-produce-id="${item.id}" data-produce-status="${status}"
+                    onclick="setProduceStatus('${item.id}', '${status}')">${status.toUpperCase()}</button>
+                `).join('')}
+              </div>
+              <input class="produce-note" type="text" value="${escapeHtml(state.note || '')}"
+                placeholder="Optional quantity or note" autocomplete="off"
+                oninput="updateProduceNote('${item.id}', this.value)">
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </section>
+  `).join('');
+}
+
+function setProduceStatus(id, status) {
+  const current = produceDraft.items[id] || { status: '', note: '' };
+  const nextStatus = current.status === status ? '' : status;
+  produceDraft.items[id] = { ...current, status: nextStatus };
+  document.querySelectorAll(`[data-produce-id="${id}"]`).forEach(button => {
+    button.classList.toggle('active', button.dataset.produceStatus === nextStatus);
+  });
+  debouncedSaveProduceDraft();
+}
+
+function updateProduceNote(id, note) {
+  const current = produceDraft.items[id] || { status: '', note: '' };
+  produceDraft.items[id] = { ...current, note };
+  debouncedSaveProduceDraft();
+}
+
+function formatHonoluluReportStamp(iso) {
+  const date = new Date(iso);
+  return {
+    completedDate: new Intl.DateTimeFormat('en-US', {
+      timeZone: HONOLULU_TIME_ZONE,
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    }).format(date),
+    completedTime: new Intl.DateTimeFormat('en-US', {
+      timeZone: HONOLULU_TIME_ZONE,
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+    }).format(date),
+  };
+}
+
+function produceReportText(report) {
+  if (!report) return '';
+  const lines = [`HĀ CAFE PRODUCE CHECK`, `${report.completedDate} · ${report.completedTime}`];
+  if (report.completedBy) lines.push(`Completed by @${report.completedBy}`);
+  ['urgent', 'low'].forEach(status => {
+    const entries = report.items.filter(item => item.status === status);
+    if (!entries.length) return;
+    lines.push('', status.toUpperCase());
+    entries.forEach(item => lines.push(`- ${item.name}${item.note ? ` — ${item.note}` : ''}`));
+  });
+  if (!report.items.length) lines.push('', 'No LOW or URGENT produce items.');
+  return lines.join('\n');
+}
+
+function renderLatestProduceReport(report) {
+  const root = document.getElementById('produce-latest-report');
+  if (!report) {
+    root.innerHTML = `<div class="produce-empty-report">No completed produce report yet. The latest official report appears here after completion.</div>`;
+    return;
+  }
+  const groups = ['urgent', 'low'].map(status => {
+    const entries = report.items.filter(item => item.status === status);
+    if (!entries.length) return '';
+    return `
+      <div class="produce-report-group">
+        <div class="produce-report-label">${status.toUpperCase()} · ${entries.length}</div>
+        ${entries.map(item => `<div class="produce-report-item"><strong>${escapeHtml(item.name)}</strong>${item.note ? ` — ${escapeHtml(item.note)}` : ''}</div>`).join('')}
+      </div>
+    `;
+  }).join('');
+  root.innerHTML = `
+    <div class="produce-report">
+      <div class="produce-report-title">Latest Official Report</div>
+      <div class="produce-report-stamp">${escapeHtml(report.completedDate)} · ${escapeHtml(report.completedTime)}${report.completedBy ? ` · @${escapeHtml(report.completedBy)}` : ''}</div>
+      ${groups || '<div class="produce-empty-report">No LOW or URGENT produce items.</div>'}
+      <div class="produce-report-actions">
+        <button class="ooi-btn-secondary" onclick="copyProduceReport()">COPY LIST</button>
+        <button class="ooi-btn-primary" onclick="shareProduceReport()">SHARE LIST</button>
+      </div>
+    </div>
+  `;
+}
+
+async function updateProduceBadge() {
+  const report = await loadLatestProduceReport();
+  const count = report && Array.isArray(report.items) ? report.items.length : 0;
+  document.querySelectorAll('#inline-produce-count, [data-badge="produce"]').forEach(badge => {
+    badge.textContent = count;
+    badge.style.display = count ? '' : 'none';
+  });
+}
+
+async function openProduceModal() {
+  produceDraft = await loadProduceDraft();
+  const report = await loadLatestProduceReport();
+  renderLatestProduceReport(report);
+  renderProduceList();
+  document.getElementById('produce-modal').classList.add('show');
+}
+
+function closeProduceModal() {
+  document.getElementById('produce-modal').classList.remove('show');
+  updateProduceBadge();
+}
+
+async function startNewProduceCheck() {
+  const hasWork = Object.values(produceDraft.items).some(item => item.status || (item.note && item.note.trim()));
+  if (hasWork && !confirm('Start a new working produce check? The latest completed report stays saved.')) return;
+  await cancelPendingProduceAutosaves();
+  produceDraft = { items: {}, updatedAt: new Date().toISOString(), updatedBy: cookHandle || null };
+  await saveProduceDraft();
+  renderProduceList();
+  const list = document.getElementById('produce-list');
+  if (list) list.scrollIntoView({ block: 'start' });
+  showToast('New produce check ready');
+}
+
+async function clearCurrentProduceCheck() {
+  const hasWork = Object.values(produceDraft.items).some(item => item.status || (item.note && item.note.trim()));
+  if (!hasWork) {
+    showToast('Current produce check is already clear');
+    return;
+  }
+  if (!confirm('Clear all statuses and notes from the current Produce Check? The latest completed report will stay saved.')) return;
+  await cancelPendingProduceAutosaves();
+  produceDraft = { items: {}, updatedAt: new Date().toISOString(), updatedBy: cookHandle || null };
+  await saveProduceDraft();
+  renderProduceList();
+  showToast('Current produce check cleared');
+}
+
+async function clearSubmittedProduceReport() {
+  const report = await loadLatestProduceReport();
+  if (!report) {
+    showToast('Submitted produce report is already clear');
+    return;
+  }
+  if (!confirm('Clear the submitted Produce report? This affects everyone using this preview.')) return;
+  await cancelPendingProduceAutosaves();
+  try {
+    await postLatestProduceReport(null);
+    renderLatestProduceReport(null);
+    await updateProduceBadge();
+    showToast('Submitted produce report cleared');
+  } catch (error) {
+    console.error('Produce report clear failed:', error);
+    showToast('Submitted report could not be cleared — try again');
+  }
+}
+
+async function completeProduceCheck(event) {
+  if (event) event.preventDefault();
+  const button = document.getElementById('produce-complete');
+  if (!cookHandle) {
+    showToast('Choose your cook handle first');
+    openHandleModal();
+    return;
+  }
+  const completedAt = new Date().toISOString();
+  const stamp = formatHonoluluReportStamp(completedAt);
+  const reportItems = PRODUCE_ITEMS.map(item => {
+    const state = produceDraft.items[item.id] || { status: '', note: '' };
+    return { id: item.id, name: item.name, status: state.status, note: (state.note || '').trim() };
+  }).filter(item => item.status === 'urgent' || item.status === 'low')
+    .sort((a, b) => (a.status === b.status ? a.name.localeCompare(b.name) : a.status === 'urgent' ? -1 : 1));
+  const report = {
+    items: reportItems,
+    completedAt,
+    completedDate: stamp.completedDate,
+    completedTime: stamp.completedTime,
+    timeZone: HONOLULU_TIME_ZONE,
+    completedBy: cookHandle,
+  };
+  await cancelPendingProduceAutosaves();
+  button.disabled = true;
+  button.textContent = 'SAVING PRODUCE REPORT…';
+  try {
+    const savedReport = await postLatestProduceReport(report);
+    await saveProduceDraft();
+    renderLatestProduceReport(savedReport);
+    await updateProduceBadge();
+    const modal = document.getElementById('produce-modal');
+    const inner = modal.querySelector('.produce-modal-inner');
+    if (inner) inner.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('Official produce report saved');
+  } catch (error) {
+    console.error('Produce report save failed:', error);
+    showToast('Produce report could not be saved — try again');
+  } finally {
+    button.disabled = false;
+    button.textContent = 'COMPLETE PRODUCE CHECK';
+  }
+}
+
+async function copyProduceReport() {
+  const report = await loadLatestProduceReport();
+  if (!report) return;
+  try {
+    await navigator.clipboard.writeText(produceReportText(report));
+    showToast('Produce list copied');
+  } catch {
+    showToast('Copy failed');
+  }
+}
+
+async function shareProduceReport() {
+  const report = await loadLatestProduceReport();
+  if (!report) return;
+  const text = produceReportText(report);
+  if (navigator.share) {
+    try { await navigator.share({ title: 'HĀ Café Produce Check', text }); }
+    catch (error) { if (error.name !== 'AbortError') showToast('Share failed'); }
+  } else {
+    await copyProduceReport();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2704,7 +3458,7 @@ let planDraft = {};       // { itemId: 'asap'|'second'|'time'|'skip' } — local
 let planTarget = 'tomorrow'; // always tomorrow — prep is always for next day
 let planMode = 'next';    // 'next' = starting tomorrow's list (carry undone), 'edit' = editing current
 let carriedOverIds = new Set(); // items pre-filled from previous undone list — for visual marker
-let activeView = 'display';
+let activeView = 'main';
 let pickerActiveItem = null;
 
 let pendingPostAfterHandle = false;
@@ -2726,7 +3480,7 @@ async function renderHandlePicker() {
   if (roster.length === 0) {
     picker.innerHTML = `
       <div class="handle-picker-empty">
-        No cooks yet. Tap <strong>+ Add new cook</strong> below to add the first one.
+        No cooks yet. Tap <strong>ADD COOK</strong> below to add the first one.
       </div>
     `;
     return;
@@ -2736,7 +3490,7 @@ async function renderHandlePicker() {
     <div class="handle-row ${cookHandle === h ? 'current' : ''}" onclick="pickHandle('${escapeHtml(h)}')">
       ${cookHandle === h ? '<span class="handle-row-current-badge">YOU</span>' : ''}
       <span class="handle-row-name">@${escapeHtml(h)}</span>
-      <button class="handle-row-remove" onclick="event.stopPropagation(); removeHandle('${escapeHtml(h)}')" title="Remove">×</button>
+      <button class="handle-row-remove" onclick="event.stopPropagation(); removeHandle('${escapeHtml(h)}')" title="Remove cook">REMOVE</button>
     </div>
   `).join('');
 }
@@ -2754,10 +3508,11 @@ async function pickHandle(h) {
 }
 
 async function removeHandle(h) {
-  if (!confirm(`Remove @${h} from the team list? This affects everyone.`)) return;
+  if (!confirm(`Remove @${h} from the shared Cook Roster? Previous prep-list records will stay unchanged.`)) return;
+  const removedCurrentCook = cookHandle === h;
   await removeHandleFromRoster(h);
   await renderHandlePicker();
-  showToast(`Removed @${h}`);
+  showToast(removedCurrentCook ? `Removed @${h} — choose another cook` : `Removed @${h}`);
 }
 
 function showAddHandleSection() {
@@ -2779,12 +3534,21 @@ function closeHandleModal() {
 }
 
 async function submitHandle() {
-  const v = document.getElementById('handle-input').value.trim();
-  if (!v) {
+  const input = document.getElementById('handle-input');
+  const normalized = input.value.trim().replace(/^@+/, '').replace(/\s+/g, '').slice(0, 20);
+  if (!normalized) {
     showToast('Need a handle to add');
+    input.focus();
     return;
   }
-  await saveHandle(v);
+  const roster = await loadHandleRoster();
+  const duplicate = roster.find(name => name.toLocaleLowerCase() === normalized.toLocaleLowerCase());
+  if (duplicate) {
+    showToast(`@${duplicate} is already on the roster`);
+    input.focus();
+    return;
+  }
+  await saveHandle(normalized);
   document.getElementById('handle-modal').classList.remove('show');
   showToast(`Aloha, @${cookHandle}`);
   if (pendingPostAfterHandle) {
@@ -2806,32 +3570,13 @@ async function renderDisplay() {
       <div class="day-banner">
         <div class="day-banner-greeting">${greeting()}</div>
         <div class="day-banner-date">No active prep list</div>
-        <div class="day-banner-sub">Tap "+ New prep list" to set up tomorrow's prep</div>
+        <div class="day-banner-sub">Use EDIT LIST to set up tomorrow's prep</div>
       </div>
       <div class="empty-state">
         <div class="empty-state-title">Awaiting prep list</div>
         <div class="empty-state-text">Nothing posted yet. The cook of the day plans tomorrow's prep here.</div>
-        <button class="empty-state-cta" onclick="planMode='next'; switchView('plan')">+ New prep list</button>
-      </div>
-      <div class="display-actions">
-        <button class="display-action-btn freezer-inline" onclick="openFreezerModal()">
-          <span class="action-icon">❄️</span>
-          <span>Freezer Stock</span>
-          <span class="action-count" id="inline-freezer-count" style="display:none">0</span>
-        </button>
-        <button class="display-action-btn ooi-inline" onclick="openOoiModal()">
-          <span class="action-icon">📝</span>
-          <span>86 / Restock</span>
-          <span class="action-count" id="inline-ooi-count" style="display:none">0</span>
-        </button>
-        <button class="display-action-btn refresh-inline" data-update-indicator onclick="checkForUpdate()">
-          <span class="action-icon">🔄</span>
-          <span>Refresh</span>
-        </button>
       </div>
     `;
-    updateOoiBadge();
-    updateFreezerBadge();
     return;
   }
 
@@ -2961,31 +3706,7 @@ async function renderDisplay() {
     `;
   }
 
-  // Inline actions at bottom — freezer, 86, edit
-  html += `
-    <div class="display-actions">
-      <button class="display-action-btn freezer-inline" onclick="openFreezerModal()">
-        <span class="action-icon">❄️</span>
-        <span>Freezer Stock</span>
-        <span class="action-count" id="inline-freezer-count" style="display:none">0</span>
-      </button>
-      <button class="display-action-btn ooi-inline" onclick="openOoiModal()">
-        <span class="action-icon">📝</span>
-        <span>86 / Restock</span>
-        <span class="action-count" id="inline-ooi-count" style="display:none">0</span>
-      </button>
-      <button class="display-action-btn" onclick="openEditMenu()">⋯ Edit list</button>
-      <button class="display-action-btn refresh-inline" data-update-indicator onclick="checkForUpdate()">
-        <span class="action-icon">🔄</span>
-        <span>Refresh</span>
-      </button>
-    </div>
-  `;
-
   target.innerHTML = html;
-  // Update badges on the freshly-rendered inline buttons
-  updateOoiBadge();
-  updateFreezerBadge();
 }
 
 // Toggle item done/undone — saves back to shared storage so all cooks see it
@@ -3122,27 +3843,8 @@ async function renderPlan() {
     });
   });
 
-  // Inline access to freezer / 86 / clear-draft while planning (so cooks can peek without posting first)
-  html += `
-    <div class="display-actions plan-actions">
-      <button class="display-action-btn freezer-inline" onclick="openFreezerModal()">
-        <span class="action-icon">❄️</span>
-        <span>Freezer Stock</span>
-        <span class="action-count" data-badge="freezer" style="display:none">0</span>
-      </button>
-      <button class="display-action-btn ooi-inline" onclick="openOoiModal()">
-        <span class="action-icon">📝</span>
-        <span>86 / Restock</span>
-        <span class="action-count" data-badge="ooi" style="display:none">0</span>
-      </button>
-    </div>
-  `;
-
   target.innerHTML = html;
   updatePostBar();
-  // Refresh badges on the freshly-rendered inline buttons
-  updateOoiBadge();
-  updateFreezerBadge();
 }
 
 function updatePostBar() {
@@ -3282,13 +3984,42 @@ async function doPostPlan() {
 // ═══════════════════════════════════════════════════════════════
 // VIEW SWITCHING
 // ═══════════════════════════════════════════════════════════════
+function updatePageHeader(view) {
+  const brand = document.getElementById('brand-tag');
+  const stamp = document.getElementById('today-stamp');
+  if (!brand || !stamp) return;
+  if (view === 'display' || view === 'plan') {
+    brand.firstChild.textContent = "Tomorrow's prep";
+    stamp.textContent = shortDate(tomorrowKey());
+  } else {
+    brand.firstChild.textContent = 'Team dashboard';
+    stamp.textContent = 'Choose a section';
+  }
+}
+
+function goToMainPage() {
+  document.querySelectorAll('.modal-backdrop.show').forEach(modal => modal.classList.remove('show'));
+  pendingPostAfterHandle = false;
+  pickerActiveItem = null;
+  activeView = 'main';
+  document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+  document.getElementById('view-main').classList.add('active');
+  document.body.classList.remove('planning');
+  document.getElementById('post-bar').style.display = 'none';
+  updatePageHeader('main');
+  window.scrollTo(0, 0);
+}
+
 async function switchView(view) {
   activeView = view;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(`view-${view}`).classList.add('active');
   document.body.classList.toggle('planning', view === 'plan');
+  updatePageHeader(view);
 
-  if (view === 'display') {
+  if (view === 'main') {
+    document.getElementById('post-bar').style.display = 'none';
+  } else if (view === 'display') {
     renderDisplay();
   } else if (view === 'plan') {
 
@@ -3361,7 +4092,7 @@ function showToast(msg) {
 // INIT
 // ═══════════════════════════════════════════════════════════════
 function setHeaderDate() {
-  document.getElementById('today-stamp').textContent = shortDate(tomorrowKey());
+  updatePageHeader(activeView);
 }
 setHeaderDate();
 
@@ -3397,6 +4128,13 @@ document.getElementById('ooi-copy').addEventListener('click', copyOoi);
 document.getElementById('ooi-clear').addEventListener('click', clearOoi);
 document.getElementById('ooi-modal').addEventListener('click', closeOoiModal);
 
+// Produce check
+document.getElementById('produce-new-check').addEventListener('click', startNewProduceCheck);
+document.getElementById('produce-clear-check').addEventListener('click', clearCurrentProduceCheck);
+document.getElementById('produce-clear-report').addEventListener('click', clearSubmittedProduceReport);
+document.getElementById('produce-complete').addEventListener('click', completeProduceCheck);
+document.getElementById('produce-modal').addEventListener('click', closeProduceModal);
+
 // Freezer inventory
 document.getElementById('freezer-overflow').addEventListener('input', (e) => {
   freezerState.overflow = e.target.value;
@@ -3414,16 +4152,18 @@ document.getElementById('edit-menu-modal').addEventListener('click', closeEditMe
   updateHandleUI();
   await updateOoiBadge();
   await updateFreezerBadge();
+  await updateProduceBadge();
 })();
 
-renderDisplay();
+goToMainPage();
+scheduleHonoluluPrepReset();
 
 // ═══════════════════════════════════════════════════════════════
 // VERSION + CACHE BUSTING
 // Bump APP_VERSION every time you push an edit to GitHub.
 // Format: YYYY.MM.DD.N  (N = edit number that day)
 // ═══════════════════════════════════════════════════════════════
-const APP_VERSION = "2026.05.27.1";
+const APP_VERSION = "2026.07.13.10-preview";
 
 // Manual refresh — bypasses cache by forcing a fresh fetch
 function checkForUpdate() {
