@@ -2548,12 +2548,13 @@ async function storageSet(key, value) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key, value }),
+      keepalive: true,
     });
-    if (!res.ok) throw new Error('save failed');
+    if (!res.ok) throw new Error(`save failed (HTTP ${res.status})`);
     return { ok: true, mode: 'shared' };
   } catch (e) {
     console.warn('Network save failed, kept locally', e.message);
-    return { ok: true, mode: 'local' };
+    return { ok: false, mode: 'local' };
   }
 }
 async function loadLatestPlan() {
@@ -2561,12 +2562,6 @@ async function loadLatestPlan() {
   const parsed = raw ? JSON.parse(raw) : null;
   if (parsed) planCache = parsed;
   return parsed;
-}
-
-// Prep lists reset at 5:00 PM every day in Hawaiʻi, regardless of device timezone.
-function isPlanActive(plan) {
-  if (!plan || !plan.postedAt) return false;
-  return new Date(plan.postedAt) >= lastResetTime();
 }
 
 async function saveLatestPlan(data) {
@@ -2645,79 +2640,21 @@ function updateHandleUI() {
 
 const HONOLULU_TIME_ZONE = 'Pacific/Honolulu';
 
-function honoluluDateParts(date = new Date()) {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: HONOLULU_TIME_ZONE,
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  }).formatToParts(date);
-  return Object.fromEntries(parts.filter(part => part.type !== 'literal').map(part => [part.type, Number(part.value)]));
-}
-
-function honoluluResetForDate(year, month, day) {
-  // Hawaiʻi does not observe DST; 5:00 PM HST is always 03:00 UTC the next day.
-  return new Date(Date.UTC(year, month - 1, day, 27, 0, 0, 0));
-}
-
-function shiftHonoluluDate(parts, days) {
-  const shifted = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days, 12));
-  return {
-    year: shifted.getUTCFullYear(),
-    month: shifted.getUTCMonth() + 1,
-    day: shifted.getUTCDate(),
-  };
-}
-
-// 5pm Hawaiʻi daily reset — returns the most recent boundary.
-function lastResetTime() {
-  const now = new Date();
-  const today = honoluluDateParts(now);
-  const todayReset = honoluluResetForDate(today.year, today.month, today.day);
-  if (now >= todayReset) return todayReset;
-  const yesterday = shiftHonoluluDate(today, -1);
-  return honoluluResetForDate(yesterday.year, yesterday.month, yesterday.day);
-}
-
-function nextResetTime() {
-  const now = new Date();
-  const today = honoluluDateParts(now);
-  const todayReset = honoluluResetForDate(today.year, today.month, today.day);
-  if (now < todayReset) return todayReset;
-  const tomorrow = shiftHonoluluDate(today, 1);
-  return honoluluResetForDate(tomorrow.year, tomorrow.month, tomorrow.day);
-}
-
-let prepResetTimer = null;
-function scheduleHonoluluPrepReset() {
-  clearTimeout(prepResetTimer);
-  const delay = Math.max(0, nextResetTime().getTime() - Date.now()) + 250;
-  prepResetTimer = setTimeout(async () => {
-    planCache = null;
-    if (activeView === 'display') await renderDisplay();
-    scheduleHonoluluPrepReset();
-  }, delay);
-}
-
 async function loadDraft() {
   const raw = await storageGet('plan_draft');
   if (!raw) return null;
   try {
-    const { draft, savedAt } = JSON.parse(raw);
-    if (new Date(savedAt) < lastResetTime()) return null; // stale, post-5pm Hawaiʻi boundary
+    const { draft } = JSON.parse(raw);
     return draft;
   } catch { return null; }
 }
 
 async function saveDraft(draft) {
-  return await storageSet('plan_draft', JSON.stringify({
-    draft,
-    savedAt: new Date().toISOString()
-  }));
+  return await storageSet('plan_draft', JSON.stringify({ draft }));
 }
 
 async function clearDraft() {
-  return await storageSet('plan_draft', JSON.stringify({ draft: {}, savedAt: new Date().toISOString() }));
+  return await storageSet('plan_draft', JSON.stringify({ draft: {} }));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3565,7 +3502,7 @@ async function renderDisplay() {
   // Use cache if available for instant render; refresh cache in background periodically
   const latest = planCache || await loadLatestPlan();
 
-  if (!latest || !latest.items || latest.items.length === 0 || !isPlanActive(latest)) {
+  if (!latest || !latest.items || latest.items.length === 0) {
     target.innerHTML = `
       <div class="day-banner">
         <div class="day-banner-greeting">${greeting()}</div>
@@ -3751,13 +3688,11 @@ async function startNextList() {
 async function clearCurrentList() {
   closeEditMenu();
   if (!confirm('Clear the current prep list for everyone? This cannot be undone.')) return;
-  // Write empty payload (cleared flag + future postedAt that fails isPlanActive immediately)
-  // postedAt of long ago means isPlanActive returns false -> empty state shows.
+  // Write an empty payload so the display shows the empty state.
   await storageSet('latest_plan', JSON.stringify({
     items: [],
     cleared: true,
     clearedAt: new Date().toISOString(),
-    postedAt: '1970-01-01T00:00:00.000Z',
   }));
   await clearDraft();
   // Brief delay so the storage write fully settles before we re-read
@@ -3953,7 +3888,7 @@ async function doPostPlan() {
   // If we're editing an existing list, preserve done-state for items still present
   const previous = await loadLatestPlan();
   let preservedDone = [];
-  if (previous && previous.done && Array.isArray(previous.done) && isPlanActive(previous)) {
+  if (previous && previous.done && Array.isArray(previous.done)) {
     const currentIds = new Set(filtered.map(i => i.id));
     preservedDone = previous.done.filter(id => currentIds.has(id));
   }
@@ -3970,14 +3905,14 @@ async function doPostPlan() {
   const ok = await saveLatestPlan(data);
   document.getElementById('confirm-modal').classList.remove('show');
   
-  if (ok && ok.ok) {
+  if (ok && ok.ok && ok.mode === 'shared') {
     const modeNote = ok.mode === 'shared' ? '' : ok.mode === 'private' ? ' (this device)' : ' (session only)';
     showToast(`Mahalo — ${filtered.length} items sent for ${shortDate(target)}${modeNote}`);
     planDraft = {};
     await clearDraft();
-    switchView('display');
+    await switchView('display');
   } else {
-    showToast('Save failed — check console');
+    showToast('Shared prep list was not saved — please try again');
   }
 }
 
@@ -3997,7 +3932,8 @@ function updatePageHeader(view) {
   }
 }
 
-function goToMainPage() {
+async function goToMainPage() {
+  if (activeView === 'plan') await saveDraft(planDraft);
   document.querySelectorAll('.modal-backdrop.show').forEach(modal => modal.classList.remove('show'));
   pendingPostAfterHandle = false;
   pickerActiveItem = null;
@@ -4011,6 +3947,7 @@ function goToMainPage() {
 }
 
 async function switchView(view) {
+  if (activeView === 'plan' && view !== 'plan') await saveDraft(planDraft);
   activeView = view;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(`view-${view}`).classList.add('active');
@@ -4156,7 +4093,6 @@ document.getElementById('edit-menu-modal').addEventListener('click', closeEditMe
 })();
 
 goToMainPage();
-scheduleHonoluluPrepReset();
 
 // ═══════════════════════════════════════════════════════════════
 // VERSION + CACHE BUSTING
@@ -4166,7 +4102,8 @@ scheduleHonoluluPrepReset();
 const APP_VERSION = "2026.07.13.10-preview";
 
 // Manual refresh — bypasses cache by forcing a fresh fetch
-function checkForUpdate() {
+async function checkForUpdate() {
+  if (activeView === 'plan') await saveDraft(planDraft);
   window.location.href = window.location.pathname + '?t=' + Date.now();
 }
 
